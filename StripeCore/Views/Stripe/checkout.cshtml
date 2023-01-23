@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Stripe Checkout Page";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="/css/checkout.css" />
+    <script src="https://js.stripe.com/v3/"></script>
+}
+
+<div class="text-center">
+    <h1 class="display-4">Stripe Applications</h1>
+    <p>Please fill information below.</p>
+</div>
+<div>
+    <form id="payment-form">
+        <div id="link-authentication-element">
+            <!--Stripe.js injects the Link Authentication Element-->
+        </div>
+        <div id="payment-element">
+            <!--Stripe.js injects the Payment Element-->
+        </div>
+        <button class="btn btn-primary btn-lg mt-2 w-100" id="submit">
+            <div class="spinner hidden" id="spinner"></div>
+            <span id="button-text">Pay now</span>
+        </button>
+        <div id="payment-message" class="hidden"></div>
+    </form>
+</div>
+
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="/js/checkout.js"></script>
+}

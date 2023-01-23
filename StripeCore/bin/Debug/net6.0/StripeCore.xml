@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>StripeCore</name>
+    </assembly>
+    <members>
+        <member name="M:StripeCore.Application.StripeAppService.AddStripeCustomerAsync(StripeCore.Models.Stripe.AddStripeCustomer,System.Threading.CancellationToken)">
+            <summary>
+            Create a new customer at Stripe through API using customer and card details from records.
+            </summary>
+            <param name="customer">Stripe Customer</param>
+            <param name="ct">Cancellation Token</param>
+            <returns>Stripe Customer</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:StripeCore.Application.StripeAppService.AddStripePaymentAsync(StripeCore.Models.Stripe.AddStripePayment,System.Threading.CancellationToken)" -->
+    </members>
+</doc>
