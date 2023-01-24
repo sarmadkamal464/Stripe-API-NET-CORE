@@ -17,17 +17,42 @@ var emailAddress = '';
 // Fetches a payment intent and captures the client secret
 async function initialize() {
   setLoading(true);
-  const response = await fetch("/stripe/form", {
+  const res = await fetch("/stripe/form", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ items }),
   });
-  const { clientSecret } = await response.json();
+  let response = await res.json();
+  const clientSecret = response.paymentIntent.clientSecret;
+  const receiptEmail = response.paymentIntent.receiptEmail;
+  emailAddress = receiptEmail;
+  const metadata = response.paymentIntent.metadata.Name;
 
   const appearance = {
     theme: 'stripe',
   };
-  elements = stripe.elements({ appearance, clientSecret });
+  elements = stripe.elements({
+    appearance,
+    clientSecret,
+    receiptEmail,
+    metadata
+  });
+
+  // Create and mount the Address Element in shipping mode
+  const addressElement = elements.create("address", {
+    mode: "shipping",
+    defaultValues: {
+      name: metadata
+    }
+  });
+  addressElement.mount("#address-element");
+
+  addressElement.on('change', (event) => {
+    if (event.complete) {
+      // Extract potentially complete address
+      const address = event.value.address;
+    }
+  })
 
   const linkAuthenticationElement = elements.create("linkAuthentication");
   linkAuthenticationElement.mount("#link-authentication-element");
@@ -38,6 +63,11 @@ async function initialize() {
 
   const paymentElementOptions = {
     layout: "tabs",
+    defaultValues: {
+      billingDetails: {
+        email: emailAddress
+      }
+    }
   };
 
   const paymentElement = elements.create("payment", paymentElementOptions);
@@ -48,14 +78,30 @@ async function initialize() {
 async function handleSubmit(e) {
   e.preventDefault();
   setLoading(true);
-  const { error } = await stripe.confirmPayment({
+  const {
+    error
+  } = await stripe.confirmPayment({
     elements,
     confirmParams: {
       // Make sure to change this to your payment completion page
-      return_url: window.location.href,
+      return_url: `${window.location.origin}/stripe/thanks`,
       receipt_email: emailAddress,
     },
   });
+
+  const handleNextStep = async () => {
+    const addressElement = elements.getElement('address');
+
+    const {
+      complete,
+      value
+    } = await addressElement.getValue();
+
+    if (complete) {
+      // Allow user to proceed to the next step
+      // Optionally, use value to store the address details
+    }
+  };
 
   // This point will only be reached if there is an immediate error when
   // confirming the payment. Otherwise, your customer will be redirected to

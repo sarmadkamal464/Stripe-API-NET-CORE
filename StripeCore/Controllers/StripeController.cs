@@ -23,23 +23,32 @@ namespace StripeCore.Controllers
             return View("Views/Stripe/checkout.cshtml");
         }
 
+        public IActionResult Thanks()
+        {
+            return View("Views/Stripe/thanks.cshtml");
+        }
+
         public IActionResult Form()
         {
             var paymentIntentService = new PaymentIntentService();
             var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
             {
-                Amount = 1000,
+                Amount = 25000,
                 Currency = "usd",
+                ReceiptEmail = "Sarmadkamal4646@test.com",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "Name", "Sarmad Kamal" },
+                },
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 {
                     Enabled = false,
                 },
             });
-
-            return Json(new { clientSecret = paymentIntent.ClientSecret });
+            return Json(new { paymentIntent });
         }
 
-        [HttpPost("customer/add")]
+    [HttpPost("customer/add")]
         public async Task<ActionResult<StripeCustomer>> AddStripeCustomer(
             [FromBody] AddStripeCustomer customer,
             CancellationToken ct)

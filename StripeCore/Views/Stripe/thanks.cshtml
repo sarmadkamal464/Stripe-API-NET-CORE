@@ -1,0 +1,111 @@
+﻿@{
+  ViewData["Title"] = "Thanks for your order";
+}
+
+@section Styles{
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  #payment-message {
+    font-size: 25px;
+  }
+
+  .payment-success-card {}
+
+  .payment-banner {
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  h1.payment-banner {
+    color: #88B04B;
+    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+    font-weight: 900;
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  p.payment-banner {
+    color: #404F5E;
+    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .checkmark {
+    color: #9ABC66;
+    font-size: 100px;
+    line-height: 200px;
+    margin-left: -15px;
+  }
+
+  .cardcard {
+    background: white;
+    padding: 60px;
+    box-shadow: 0 2px 3px #C8D0D8;
+    display: inline-block;
+    margin: 0 auto;
+    width:100%;
+  }
+</style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="payment-banner">
+    <div class="cardcard">
+    <div style="height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
+      <i class="checkmark">✓</i>
+    </div>
+    <h1>Success</h1>
+    <p>We received your purchase request;<br />Please wait we'll sending you back payment status!</p>
+    <span class="spinner-border text-primary" role="status">
+  <span class="sr-only"></span>
+</span>
+  </div>
+</div>
+<p id="payment-message"></p>
+
+@section Scripts{
+<script>
+  const stripe = Stripe("pk_test_fA1rHO8k8lDqjm4qaSFyJrlx");
+  checkStatus();
+  async function checkStatus() {
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      "payment_intent_client_secret"
+    );
+    let payment_intent_id = new URLSearchParams(window.location.search).get(
+      "payment_intent"
+    );
+
+    if (!clientSecret) {
+      return;
+    }
+
+    console.log(await stripe.retrievePaymentIntent(clientSecret));
+    const { paymentIntent } = await stripe.retrievePaymentIntent(clientSecret);
+    $('.payment-banner').hide();
+    switch (paymentIntent.status) {
+      case "succeeded":
+        showMessage("Your Payment is processed successfully against Id: " + payment_intent_id);
+        break;
+      case "processing":
+        showMessage("Your payment is processing.");
+        break;
+      case "requires_payment_method":
+        showMessage("Your payment was not successful, please try again.");
+        break;
+      default:
+        showMessage("Something went wrong.");
+        break;
+    }
+  }
+
+  function showMessage(messageText) {
+    const messageContainer = document.querySelector("#payment-message");
+    messageContainer.classList.remove("hidden");
+    messageContainer.textContent = messageText;
+    $('.spinner-border').hide();
+  }
+</script>
+
+}

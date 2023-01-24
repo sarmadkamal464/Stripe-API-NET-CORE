@@ -1,10 +1,10 @@
 @{
-    ViewData["Title"] = "Stripe Checkout Page";
+ViewData["Title"] = "Stripe Checkout Page";
 }
 
 @section Styles{
-    <link rel="stylesheet" href="/css/checkout.css" />
-    <script src="https://js.stripe.com/v3/"></script>
+<link rel="stylesheet" href="/css/checkout.css" />
+<script src="https://js.stripe.com/v3/"></script>
 }
 
 <div class="text-center">
@@ -19,15 +19,18 @@
         <div id="payment-element">
             <!--Stripe.js injects the Payment Element-->
         </div>
+        <div id="address-element">
+            <!-- Elements will create form elements here -->
+        </div>
         <button class="btn btn-primary btn-lg mt-2 w-100" id="submit">
             <div class="spinner hidden" id="spinner"></div>
-            <span id="button-text">Pay now</span>
+            <span id="button-text">Pay $25</span>
         </button>
         <div id="payment-message" class="hidden"></div>
     </form>
 </div>
 
 @section Scripts{
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="/js/checkout.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="/js/checkout.js"></script>
 }
